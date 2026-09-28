@@ -45,6 +45,3 @@ div {
 nav > button:active {
     transform: scale(0.7);
 }
-div:hover {
-    transform: scale(1.3);
-}
