@@ -42,6 +42,6 @@ div {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
-button:active {
+.boton:active {
     transform: scale(0.5);
 }
