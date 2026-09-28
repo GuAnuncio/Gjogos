@@ -45,3 +45,6 @@ div {
 nav > button:active {
     transform: scale(0.5);
 }
+nav > a:active {
+    transform: scale(0.5);
+}
