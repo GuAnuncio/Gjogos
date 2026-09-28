@@ -43,8 +43,8 @@ div {
     gap: 20px;
 }
 nav > button:active {
-    transform: scale(0.5);
+    transform: scale(0.7);
 }
-div > img {
+div > img:hover {
     transform: scale(1.3);
 }
