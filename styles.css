@@ -45,6 +45,6 @@ div {
 nav > button:active {
     transform: scale(0.5);
 }
-div > figure:hover {
-    transform: scale(1.3); 
-    }
+div > img {
+    transform: scale(1.3);
+}
