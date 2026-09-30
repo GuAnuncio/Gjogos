@@ -48,3 +48,6 @@ nav > a > button:active {
 nav > a > button:hover {
     transform: scale(1.2);
 }
+img:hover{
+transform: scale(1.3);
+}
