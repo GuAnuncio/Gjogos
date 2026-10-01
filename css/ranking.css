@@ -9,3 +9,22 @@ h1{
 nav > a > button:hover {
     transform: scale(1.2);
 }
+img {
+    height: 150px !important;
+    width: 150px !important;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+figure {
+    margin: 10px;
+    text-align: center;
+}
+div {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+img:hover{
+transform: scale(1.3);
+}
