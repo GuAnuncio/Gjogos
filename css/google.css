@@ -10,8 +10,8 @@ nav > a > button:hover {
     transform: scale(1.2);
 }
 img {
-    height: 150px !important;
-    width: 150px !important;
+    height: 300px !important;
+    width: 250x !important;
     object-fit: cover;
     border-radius: 10px;
 }
