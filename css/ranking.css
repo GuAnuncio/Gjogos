@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+body {
+    background-image: linear-gradient(to right, blue, white, lightpink);
+}
+h1{
+    text-align: center;
+    }
+nav > a > button:hover {
+    transform: scale(1.2);
+}
