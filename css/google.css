@@ -15,3 +15,9 @@ img {
     object-fit: cover;
     border-radius: 10px;
 }
+.meio{
+    text-align: center;
+}
+figure{
+    margin: auto;
+}
