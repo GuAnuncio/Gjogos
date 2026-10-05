@@ -7,7 +7,10 @@
 
     <title>Papa's Pizzeria - GJogos</title>
 
-    <!-- Ruffle: executa o jogo Flash no navegador -->
+    <!-- Ícone do GJogos -->
+    <link rel="icon" href="../../59084.ico" type="image/x-icon">
+
+    <!-- Ruffle -->
     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
     <style>
@@ -44,19 +47,25 @@
             margin: 25px auto;
         }
 
-        .voltar {
-            display: inline-block;
-            padding: 10px 18px;
+        .botoes {
+            display: flex;
+            gap: 10px;
             margin-bottom: 15px;
+        }
+
+        .botao {
+            padding: 10px 18px;
             background: white;
             color: #2563eb;
             text-decoration: none;
             font-weight: bold;
+            border: none;
             border-radius: 10px;
-            transition: 0.2s;
+            cursor: pointer;
+            font-size: 15px;
         }
 
-        .voltar:hover {
+        .botao:hover {
             transform: scale(1.05);
         }
 
@@ -69,10 +78,7 @@
 
         #jogo {
             width: 100%;
-            min-height: 700px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 700px;
             background: #111;
             border-radius: 10px;
             overflow: hidden;
@@ -80,14 +86,12 @@
 
         ruffle-player {
             width: 100%;
-            height: 700px;
+            height: 100%;
         }
 
         footer {
             text-align: center;
             padding: 20px;
-            margin-top: 20px;
-            background: rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -101,11 +105,19 @@
 
     <main class="container">
 
-        <a class="voltar" href="index.html">
-            ← Voltar para o GJogos
-        </a>
+        <div class="botoes">
 
-        <div class="jogo">
+            <a class="botao" href="index.html">
+                ← Voltar
+            </a>
+
+            <button class="botao" onclick="telaCheia()">
+                ⛶ Tela cheia
+            </button>
+
+        </div>
+
+        <div class="jogo" id="areaJogo">
             <div id="jogo"></div>
         </div>
 
@@ -117,6 +129,8 @@
 
 
     <script>
+
+        /* Cria o jogador Ruffle */
         window.RufflePlayer = window.RufflePlayer || {};
 
         window.addEventListener("load", function () {
@@ -126,16 +140,34 @@
             const player = ruffle.createPlayer();
 
             player.style.width = "100%";
-            player.style.height = "700px";
+            player.style.height = "100%";
 
             document.getElementById("jogo").appendChild(player);
 
             player.load("papaspizzeria_v2.swf");
 
         });
+
+
+        /* Botão de tela cheia */
+        function telaCheia() {
+
+            const area = document.getElementById("areaJogo");
+
+            if (!document.fullscreenElement) {
+
+                area.requestFullscreen();
+
+            } else {
+
+                document.exitFullscreen();
+
+            }
+
+        }
+
     </script>
 
 </body>
 
 </html>
-
