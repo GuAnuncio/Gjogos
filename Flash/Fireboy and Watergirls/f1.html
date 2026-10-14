@@ -7,13 +7,19 @@
 
     <title>Fireboy and Watergirl - GJogos</title>
 
-    <!-- Ícone do GJogos -->
     <link rel="icon" href="../../59084.ico" type="image/x-icon">
 
-    <!-- Ruffle -->
-    
-     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <!-- Configuração do Ruffle -->
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        window.RufflePlayer.config = {
+            autoplay: "on",
+            splashScreen: false,
+            backgroundColor: "#111111"
+        };
+    </script>
 
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
     <style>
         * {
@@ -51,11 +57,13 @@
 
         .botoes {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 15px;
         }
 
         .botao {
+            display: inline-block;
             padding: 10px 18px;
             background: white;
             color: #2563eb;
@@ -68,7 +76,7 @@
         }
 
         .botao:hover {
-            transform: scale(1.05);
+            transform: scale(1.04);
         }
 
         .jogo {
@@ -84,16 +92,50 @@
             background: #111;
             border-radius: 10px;
             overflow: hidden;
+            position: relative;
         }
 
-        ruffle-player {
+        #jogo ruffle-player {
+            display: block;
             width: 100%;
             height: 100%;
+        }
+
+        #mensagem {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            font-size: 17px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
         }
 
         footer {
             text-align: center;
             padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            #jogo {
+                height: 450px;
+            }
+        }
+
+        #areaJogo:fullscreen {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            background: #111;
+        }
+
+        #areaJogo:fullscreen #jogo {
+            height: 100%;
+            border-radius: 0;
         }
     </style>
 </head>
@@ -108,19 +150,21 @@
     <main class="container">
 
         <div class="botoes">
-
             <a class="botao" href="../../index.html">
                 ← Voltar
             </a>
 
-            <button class="botao" onclick="telaCheia()">
+            <button class="botao" id="botaoTelaCheia">
                 ⛶ Tela cheia
             </button>
-
         </div>
 
         <div class="jogo" id="areaJogo">
-            <div id="jogo"></div>
+            <div id="jogo">
+                <div id="mensagem">
+                    Carregando o jogo...
+                </div>
+            </div>
         </div>
 
     </main>
@@ -129,47 +173,68 @@
         <p>GJogos - Jogos Online</p>
     </footer>
 
-
     <script>
+        const areaJogo = document.getElementById("areaJogo");
+        const elementoJogo = document.getElementById("jogo");
+        const mensagem = document.getElementById("mensagem");
 
-        /* Cria o jogador Ruffle */
-        window.RufflePlayer = window.RufflePlayer || {};
-
-        window.addEventListener("load", function () {
-
-            const ruffle = window.RufflePlayer.newest();
-
-            const player = ruffle.createPlayer();
-
-            player.style.width = "100%";
-            player.style.height = "100%";
-
-            document.getElementById("jogo").appendChild(player);
-
-            player.load("fum.swf");
-
-        });
-
-
-        /* Botão de tela cheia */
-        function telaCheia() {
-
-            const area = document.getElementById("areaJogo");
-
-            if (!document.fullscreenElement) {
-
-                area.requestFullscreen();
-
-            } else {
-
-                document.exitFullscreen();
-
-            }
-
+        function mostrarErro(texto) {
+            mensagem.style.display = "flex";
+            mensagem.textContent = texto;
         }
 
+        async function carregarJogo() {
+            try {
+                if (!window.RufflePlayer ||
+                    !window.RufflePlayer.newest) {
+                    throw new Error(
+                        "O Ruffle não foi carregado. Verifique sua conexão."
+                    );
+                }
+
+                const ruffle = window.RufflePlayer.newest();
+                const player = ruffle.createPlayer();
+
+                player.style.width = "100%";
+                player.style.height = "100%";
+
+                elementoJogo.appendChild(player);
+
+                // O arquivo SWF deve estar nesta mesma pasta.
+                await player.load("./fum.swf");
+
+                mensagem.style.display = "none";
+
+            } catch (erro) {
+                console.error("Erro ao carregar o jogo:", erro);
+
+                mostrarErro(
+                    "Não foi possível carregar o jogo. " +
+                    "Confira se fum.swf está na pasta correta " +
+                    "e se o arquivo é um SWF válido. " +
+                    "Abra o Console do navegador (F12) para ver o erro."
+                );
+            }
+        }
+
+        document.getElementById("botaoTelaCheia")
+            .addEventListener("click", async function () {
+                try {
+                    if (!document.fullscreenElement) {
+                        await areaJogo.requestFullscreen();
+                    } else {
+                        await document.exitFullscreen();
+                    }
+                } catch (erro) {
+                    console.error(
+                        "Erro ao abrir tela cheia:",
+                        erro
+                    );
+                }
+            });
+
+        carregarJogo();
     </script>
 
 </body>
-
 </html>
