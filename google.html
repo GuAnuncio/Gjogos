@@ -1,12 +1,12 @@
 
 
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Google - GJogos</title>
+    <title>Efekta - GJogos</title>
     <link rel="icon" href="59084.ico">
 
     <style>
@@ -23,95 +23,176 @@
             overflow: hidden;
         }
 
-        #game-container {
-            width: 100vw;
+        #container {
+            width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        #toolbar {
-            height: 48px;
-            min-height: 48px;
+        header {
             background: #202020;
+            padding: 10px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        #toolbar h1 {
+        header h2 {
             font-size: 17px;
-            font-weight: normal;
+            white-space: nowrap;
         }
 
-        #toolbar button {
-            border: none;
-            color: white;
-            background: #383838;
-            padding: 9px 13px;
+        form {
+            flex: 1;
+            display: flex;
+            gap: 6px;
+            min-width: 200px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px;
+            border: 1px solid #555;
             border-radius: 5px;
+            background: #303030;
+            color: white;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 13px;
+            border: none;
+            border-radius: 5px;
+            background: #4285f4;
+            color: white;
             cursor: pointer;
         }
 
-        #toolbar button:hover {
-            background: #505050;
+        button:hover {
+            background: #2865c7;
         }
 
-        #browser {
-            width: 100%;
+        #fullscreen {
+            background: #444;
+        }
+
+        iframe {
             flex: 1;
+            width: 100%;
             border: none;
             background: white;
         }
 
-        #game-container:fullscreen {
+        #container:fullscreen {
             width: 100%;
             height: 100%;
         }
 
-        #game-container:fullscreen #toolbar {
-            height: 42px;
-            min-height: 42px;
+        #aviso {
+            background: #202020;
+            color: #ccc;
+            text-align: center;
+            padding: 6px;
+            font-size: 12px;
         }
 
-        #message {
-            padding: 8px;
-            background: #202020;
-            text-align: center;
-            font-size: 12px;
+        @media (max-width: 500px) {
+            header h2 {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
+<div id="container">
 
-<div id="game-container">
+    <header>
+        <h2>Efekta | GJogos</h2>
 
-    <div id="toolbar">
-        <h1>Google | GJogos</h1>
+        <form id="searchForm">
+            <input
+                type="text"
+                id="url"
+                placeholder="Digite um site ou endereço..."
+                value="https://learn.better.efekta.com/gap/ui/home?domain_hint=goias"
+                required
+            >
+            <button type="submit">Abrir</button>
+        </form>
 
-        <button onclick="toggleFullscreen()">
+        <button id="fullscreen" onclick="telaCheia()">
             ⛶ Tela cheia
         </button>
-    </div>
+    </header>
 
     <iframe
-        id="browser"
-        src="https://www.google.com/webhp?igu=1"
-        title="Google"
+        id="pagina"
+        src="https://learn.better.efekta.com/gap/ui/home?domain_hint=goias"
+        title="Plataforma Efekta"
         allow="fullscreen"
     ></iframe>
 
-    <div id="message">
-        Algumas páginas podem bloquear a exibição dentro deste quadro.
+    <div id="aviso">
+        Se o site não abrir aqui, tente o botão Abrir em nova aba.
+        Alguns sites bloqueiam iframes.
+        <button onclick="novaAba()">Abrir em nova aba</button>
     </div>
 
 </div>
 
 <script>
-    function toggleFullscreen() {
-        const container = document.getElementById("game-container");
+    const campo = document.getElementById("url");
+    const pagina = document.getElementById("pagina");
+
+    function obterEndereco(texto) {
+        texto = texto.trim();
+
+        if (!texto) return null;
+
+        // Pesquisas são abertas no Google.
+        if (texto.includes(" ")) {
+            return "https://www.google.com/search?q="
+                + encodeURIComponent(texto);
+        }
+
+        if (!/^https?:\/\//i.test(texto)) {
+            texto = "https://" + texto;
+        }
+
+        try {
+            const endereco = new URL(texto);
+
+            if (!["http:", "https:"].includes(endereco.protocol)) {
+                return null;
+            }
+
+            return endereco.href;
+        } catch {
+            return null;
+        }
+    }
+
+    document.getElementById("searchForm")
+        .addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const endereco = obterEndereco(campo.value);
+
+            if (!endereco) {
+                alert("Digite um endereço válido.");
+                return;
+            }
+
+            campo.value = endereco;
+            pagina.src = endereco;
+        });
+
+    function telaCheia() {
+        const container = document.getElementById("container");
 
         if (!document.fullscreenElement) {
             container.requestFullscreen().catch(() => {
@@ -121,7 +202,14 @@
             document.exitFullscreen();
         }
     }
-</script>
 
+    function novaAba() {
+        const endereco = obterEndereco(campo.value);
+
+        if (endereco) {
+            window.open(endereco, "_blank", "noopener,noreferrer");
+        }
+    }
+</script>
 </body>
 </html>
