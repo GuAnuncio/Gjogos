@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Web - GJogos</title>
+    <link rel="icon" href="59084.ico">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f3f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #4285f4;
+            color: white;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .search {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: white;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #4285f4;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #4285f4;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #3367d6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 12px 12px;
+            background: white;
+        }
+
+        .actions button {
+            background: #5f6368;
+        }
+
+        #status {
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            color: #5f6368;
+        }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            border: none;
+            background: white;
+        }
+
+        footer {
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 500px) {
+            header {
+                padding: 12px;
+            }
+
+            .search button {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Google Web</h2>
+        <p>Pesquise e abra páginas da internet</p>
+    </header>
+
+    <form class="search" id="searchForm">
+        <input
+            id="address"
+            type="text"
+            placeholder="Digite uma pesquisa ou endereço..."
+            autocomplete="off"
+            required
+        >
+        <button type="submit">Abrir</button>
+    </form>
+
+    <div class="actions">
+        <button type="button" onclick="goBack()">Voltar</button>
+        <button type="button" onclick="reloadPage()">Recarregar</button>
+        <button type="button" onclick="openExternal()">
+            Abrir em nova aba
+        </button>
+    </div>
+
+    <p id="status">
+        Algumas páginas não permitem exibição dentro do iframe.
+    </p>
+
+    <iframe
+        id="browser"
+        src="https://www.google.com/webhp?igu=1"
+        title="Conteúdo da página"
+        allow="fullscreen"
+        referrerpolicy="strict-origin-when-cross-origin"
+    ></iframe>
+
+    <footer>
+        Google Web — ferramenta de acesso a páginas
+    </footer>
+
+    <script>
+        const browser = document.getElementById("browser");
+        const address = document.getElementById("address");
+        const status = document.getElementById("status");
+
+        let currentUrl = "https://www.google.com/webhp?igu=1";
+
+        function getUrl(value) {
+            value = value.trim();
+
+            if (!value) return null;
+
+            // Se for uma pesquisa, abre os resultados do Google.
+            if (value.includes(" ") || !value.includes(".")) {
+                return "https://www.google.com/search?q="
+                    + encodeURIComponent(value);
+            }
+
+            // Se for um endereço, acrescenta HTTPS quando necessário.
+            if (!/^https?:\/\//i.test(value)) {
+                value = "https://" + value;
+            }
+
+            try {
+                const url = new URL(value);
+
+                if (url.protocol !== "http:" &&
+                    url.protocol !== "https:") {
+                    return null;
+                }
+
+                return url.href;
+            } catch {
+                return null;
+            }
+        }
+
+        function navigate(url) {
+            if (!url) {
+                status.textContent = "Digite uma pesquisa ou URL válida.";
+                return;
+            }
+
+            currentUrl = url;
+            browser.src = url;
+            address.value = url;
+
+            status.textContent =
+                "Tentando abrir a página dentro do quadro...";
+        }
+
+        document.getElementById("searchForm")
+            .addEventListener("submit", function(event) {
+                event.preventDefault();
+                navigate(getUrl(address.value));
+            });
+
+        function goBack() {
+            // O histórico interno do iframe pode não estar acessível.
+            try {
+                browser.contentWindow.history.back();
+            } catch {
+                status.textContent =
+                    "Não foi possível voltar nesta página. Use uma nova aba.";
+            }
+        }
+
+        function reloadPage() {
+            browser.src = currentUrl;
+            status.textContent = "Recarregando página...";
+        }
+
+        function openExternal() {
+            window.open(currentUrl, "_blank", "noopener,noreferrer");
+        }
+    </script>
+</body>
+</html>
